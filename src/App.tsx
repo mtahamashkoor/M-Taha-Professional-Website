@@ -23,6 +23,7 @@ export default function App() {
   const [inquiries, setInquiries] = useState<ClientInquiry[]>([]);
   const [selectedInquiryId, setSelectedInquiryId] = useState<string | null>(null);
   const [isAdminUnlocked, setIsAdminUnlocked] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     const saved = localStorage.getItem('taha_theme');
     return (saved === 'light' || saved === 'dark') ? saved : 'dark';
@@ -45,9 +46,10 @@ export default function App() {
     setTheme(prev => prev === 'dark' ? 'light' : 'dark');
   };
 
-  // Load inquiries from server on mount
-  useEffect(() => {
-    fetch('/api/inquiries')
+  // Fetch inquiries from server
+  const fetchInquiries = () => {
+    setIsRefreshing(true);
+    return fetch('/api/inquiries')
       .then(res => {
         if (!res.ok) throw new Error('Server response not ok');
         return res.json();
@@ -55,7 +57,12 @@ export default function App() {
       .then(data => {
         setInquiries(data);
         if (data && data.length > 0) {
-          setSelectedInquiryId(data[0].id);
+          const exists = data.some(inq => inq.id === selectedInquiryId);
+          if (!exists) {
+            setSelectedInquiryId(data[0].id);
+          }
+        } else {
+          setSelectedInquiryId(null);
         }
       })
       .catch(err => {
@@ -67,7 +74,10 @@ export default function App() {
             const parsed = JSON.parse(raw);
             setInquiries(parsed);
             if (parsed && parsed.length > 0) {
-              setSelectedInquiryId(parsed[0].id);
+              const exists = parsed.some((inq: any) => inq.id === selectedInquiryId);
+              if (!exists) {
+                setSelectedInquiryId(parsed[0].id);
+              }
             }
           } catch (e) {
             setInquiries(INITIAL_INQUIRIES);
@@ -81,7 +91,18 @@ export default function App() {
             setSelectedInquiryId(INITIAL_INQUIRIES[0].id);
           }
         }
+      })
+      .finally(() => {
+        // Minimum delay for beautiful visual spinning feedback
+        setTimeout(() => {
+          setIsRefreshing(false);
+        }, 500);
       });
+  };
+
+  // Load inquiries from server on mount
+  useEffect(() => {
+    fetchInquiries();
   }, []);
 
   // Callback to register a new client quote submission
@@ -373,6 +394,8 @@ export default function App() {
               onDeleteInquiry={handleDeleteInquiry}
               onAddMockInquiry={handleAddMockInquiry}
               onLock={() => setIsAdminUnlocked(false)}
+              onRefresh={fetchInquiries}
+              isRefreshing={isRefreshing}
             />
           )}
         </main>

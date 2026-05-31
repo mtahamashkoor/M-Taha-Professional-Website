@@ -28,7 +28,7 @@ const CustomTooltip = ({ active, payload }: any) => {
 };
 import { 
   Users, TrendingUp, Inbox, CheckCircle2, Search, Filter, 
-  MessageSquare, FileText, ChevronRight, Save, Trash2, Globe, Clock, PlusSquare, ArrowUpRight, Lock, Coins 
+  MessageSquare, FileText, ChevronRight, Save, Trash2, Globe, Clock, PlusSquare, ArrowUpRight, Lock, Coins, RefreshCw 
 } from 'lucide-react';
 
 interface LeadDashboardProps {
@@ -39,6 +39,8 @@ interface LeadDashboardProps {
   onDeleteInquiry: (id: string) => void;
   onAddMockInquiry: () => void;
   onLock?: () => void;
+  onRefresh?: () => Promise<void>;
+  isRefreshing?: boolean;
 }
 
 export default function LeadDashboard({ 
@@ -48,7 +50,9 @@ export default function LeadDashboard({
   onUpdateInquiry, 
   onDeleteInquiry, 
   onAddMockInquiry,
-  onLock
+  onLock,
+  onRefresh,
+  isRefreshing = false
 }: LeadDashboardProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<LeadStatus | 'All'>('All');
@@ -264,6 +268,23 @@ export default function LeadDashboard({
         </div>
 
         <div className="flex flex-wrap gap-2">
+          {onRefresh && (
+            <button
+              type="button"
+              onClick={() => {
+                onRefresh().then(() => {
+                  showToast('Lead records updated with the latest server data.');
+                });
+              }}
+              disabled={isRefreshing}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-800 bg-zinc-950 hover:bg-zinc-900 hover:text-white px-3.5 py-2 text-xs font-bold text-zinc-300 shadow-xl transition cursor-pointer disabled:opacity-50"
+              title="Fetch new inquiries from database"
+            >
+              <RefreshCw className={`h-3.5 w-3.5 text-emerald-400 ${isRefreshing ? 'animate-spin' : ''}`} />
+              <span>{isRefreshing ? 'Refreshing...' : 'Refresh'}</span>
+            </button>
+          )}
+
           <button
             type="button"
             onClick={onAddMockInquiry}
