@@ -28,7 +28,7 @@ const CustomTooltip = ({ active, payload }: any) => {
 };
 import { 
   Users, TrendingUp, Inbox, CheckCircle2, Search, Filter, 
-  MessageSquare, FileText, ChevronRight, Save, Trash2, Globe, Clock, PlusSquare, ArrowUpRight 
+  MessageSquare, FileText, ChevronRight, Save, Trash2, Globe, Clock, PlusSquare, ArrowUpRight, Lock 
 } from 'lucide-react';
 
 interface LeadDashboardProps {
@@ -38,6 +38,7 @@ interface LeadDashboardProps {
   onUpdateInquiry: (updated: ClientInquiry) => void;
   onDeleteInquiry: (id: string) => void;
   onAddMockInquiry: () => void;
+  onLock?: () => void;
 }
 
 export default function LeadDashboard({ 
@@ -46,7 +47,8 @@ export default function LeadDashboard({
   onSelectInquiry, 
   onUpdateInquiry, 
   onDeleteInquiry, 
-  onAddMockInquiry 
+  onAddMockInquiry,
+  onLock
 }: LeadDashboardProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<LeadStatus | 'All'>('All');
@@ -251,14 +253,29 @@ export default function LeadDashboard({
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={onAddMockInquiry}
-          className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-800 bg-zinc-950 hover:bg-zinc-900 hover:text-white px-3.5 py-2 text-xs font-bold text-zinc-300 shadow-xl transition cursor-pointer"
-        >
-          <PlusSquare className="h-4 w-4 text-yellow-400" />
-          <span>Inject Demo Lead</span>
-        </button>
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={onAddMockInquiry}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-800 bg-zinc-950 hover:bg-zinc-900 hover:text-white px-3.5 py-2 text-xs font-bold text-zinc-300 shadow-xl transition cursor-pointer"
+          >
+            <PlusSquare className="h-4 w-4 text-yellow-400" />
+            <span>Inject Demo Lead</span>
+          </button>
+
+          {onLock && (
+            <button
+              type="button"
+              id="lock-console-btn"
+              onClick={onLock}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-rose-900/40 bg-rose-950/25 hover:bg-rose-950/50 hover:text-rose-350 px-3.5 py-2 text-xs font-bold text-rose-450 shadow-xl transition cursor-pointer"
+              title="Lock administrative dashboard console"
+            >
+              <Lock className="h-3.5 w-3.5 text-rose-500 animate-pulse" />
+              <span>Lock Console</span>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Recharts Sales Pipeline Graphical Breakdown Card */}

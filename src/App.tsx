@@ -8,6 +8,7 @@ import Navigation from './components/Navigation';
 import Hero from './components/Hero';
 import QuotePlanner from './components/QuotePlanner';
 import LeadDashboard from './components/LeadDashboard';
+import AdminLockScreen from './components/AdminLockScreen';
 import ConceptWork from './components/ConceptWork';
 import AboutSection from './components/AboutSection';
 import ContactSection from './components/ContactSection';
@@ -21,6 +22,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<'client' | 'admin'>('client');
   const [inquiries, setInquiries] = useState<ClientInquiry[]>([]);
   const [selectedInquiryId, setSelectedInquiryId] = useState<string | null>(null);
+  const [isAdminUnlocked, setIsAdminUnlocked] = useState(false);
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     const saved = localStorage.getItem('taha_theme');
     return (saved === 'light' || saved === 'dark') ? saved : 'dark';
@@ -360,14 +362,19 @@ export default function App() {
       ) : (
         /* PERSISTENT WEB CRM BUSINESS DASHBOARD VIEW */
         <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 pb-20">
-          <LeadDashboard
-            inquiries={inquiries}
-            selectedInquiryId={selectedInquiryId}
-            onSelectInquiry={setSelectedInquiryId}
-            onUpdateInquiry={handleUpdateInquiry}
-            onDeleteInquiry={handleDeleteInquiry}
-            onAddMockInquiry={handleAddMockInquiry}
-          />
+          {!isAdminUnlocked ? (
+            <AdminLockScreen onUnlock={() => setIsAdminUnlocked(true)} />
+          ) : (
+            <LeadDashboard
+              inquiries={inquiries}
+              selectedInquiryId={selectedInquiryId}
+              onSelectInquiry={setSelectedInquiryId}
+              onUpdateInquiry={handleUpdateInquiry}
+              onDeleteInquiry={handleDeleteInquiry}
+              onAddMockInquiry={handleAddMockInquiry}
+              onLock={() => setIsAdminUnlocked(false)}
+            />
+          )}
         </main>
       )}
     </div>
