@@ -6,7 +6,8 @@
 import React, { useState, useMemo } from 'react';
 import { SERVICE_PACKAGES, CUSTOM_FEATURES } from '../data';
 import { ServiceTierType, ClientInquiry } from '../types';
-import { Sparkles, Check, ChevronRight, RefreshCw, Smartphone, Laptop, Database, Globe, Sliders, DollarSign, Send, CheckCircle, MessageSquare } from 'lucide-react';
+import { Sparkles, Check, RefreshCw, Send, CheckCircle, MessageSquare } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 
 interface QuotePlannerProps {
   onAddInquiry: (inquiry: ClientInquiry) => void;
@@ -169,30 +170,36 @@ export default function QuotePlanner({ onAddInquiry }: QuotePlannerProps) {
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 {SERVICE_PACKAGES.map((pkg) => (
-                  <button
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                     key={pkg.id}
                     type="button"
                     onClick={() => setSelectedPackageId(pkg.id)}
-                    className={`text-left p-4 rounded-xl border transition-all duration-200 relative ${
+                    className={`text-left p-4 rounded-xl border transition-all duration-200 relative cursor-pointer ${
                       selectedPackageId === pkg.id
                         ? 'border-emerald-500 bg-zinc-900/90 ring-2 ring-emerald-500/10 shadow-xl'
                         : 'border-zinc-800 bg-zinc-950/20 hover:border-zinc-700 hover:bg-zinc-950/40'
                     }`}
                   >
                     {selectedPackageId === pkg.id && (
-                      <span className="absolute top-3 right-3 flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500 text-white text-[10px] font-bold">
+                      <motion.span 
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        className="absolute top-3 right-3 flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500 text-white text-[10px] font-bold"
+                      >
                         <Check className="h-2.5 w-2.5" />
-                      </span>
+                      </motion.span>
                     )}
                     <h5 className="font-sans text-xs font-bold text-white">{pkg.title}</h5>
                     <p className="text-[11px] text-zinc-400 mt-1 line-clamp-2 leading-relaxed">{pkg.shortDesc}</p>
                     <div className="flex justify-between items-center mt-3 pt-3 border-t border-zinc-800">
-                      <span className="text-[10px] font-mono font-semibold text-zinc-500 font-sans">Base Cost:</span>
+                      <span className="text-[10px] font-mono font-semibold text-zinc-500">Base Cost:</span>
                       <span className="text-xs font-mono font-bold text-emerald-400">
                         {currency === 'PKR' ? `PKR ${pkg.basePricePKR.toLocaleString()}` : `$${pkg.basePriceUSD}`}
                       </span>
                     </div>
-                  </button>
+                  </motion.button>
                 ))}
               </div>
             </div>
@@ -206,7 +213,10 @@ export default function QuotePlanner({ onAddInquiry }: QuotePlannerProps) {
                 {CUSTOM_FEATURES.map((feature) => {
                   const isSelected = selectedFeatureIds.includes(feature.id);
                   return (
-                    <div
+                    <motion.div
+                      layout
+                      whileHover={{ scale: 1.01 }}
+                      whileTap={{ scale: 0.99 }}
                       key={feature.id}
                       onClick={() => handleToggleFeature(feature.id)}
                       className={`flex items-start justify-between p-3.5 rounded-xl border cursor-pointer transition-all ${
@@ -230,7 +240,7 @@ export default function QuotePlanner({ onAddInquiry }: QuotePlannerProps) {
                       <span className="text-xs font-mono font-bold text-emerald-400 whitespace-nowrap">
                         +{currency === 'PKR' ? `PKR ${feature.costPKR.toLocaleString()}` : `$${feature.costUSD}`}
                       </span>
-                    </div>
+                    </motion.div>
                   );
                 })}
               </div>
@@ -241,8 +251,10 @@ export default function QuotePlanner({ onAddInquiry }: QuotePlannerProps) {
               <label className="text-xs font-bold uppercase tracking-wider text-zinc-400 font-mono block">
                 Step 03: Delivery Priority & Timeline
               </label>
-              <div className="grid grid-cols-3 gap-2 bg-zinc-950 p-1.5 rounded-lg border border-zinc-800">
-                <button
+              <div className="grid grid-cols-3 gap-2 bg-zinc-950 p-1.5 rounded-lg border border-zinc-800 relative z-10">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   type="button"
                   onClick={() => setTimelineMode('flexible')}
                   className={`py-2 text-center rounded-md text-[11px] font-sans font-bold transition-all cursor-pointer ${
@@ -252,8 +264,10 @@ export default function QuotePlanner({ onAddInquiry }: QuotePlannerProps) {
                   }`}
                 >
                   Flexible (-7% Quote)
-                </button>
-                <button
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   type="button"
                   onClick={() => setTimelineMode('standard')}
                   className={`py-2 text-center rounded-md text-[11px] font-sans font-bold transition-all cursor-pointer ${
@@ -263,8 +277,10 @@ export default function QuotePlanner({ onAddInquiry }: QuotePlannerProps) {
                   }`}
                 >
                   Standard Delivery
-                </button>
-                <button
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   type="button"
                   onClick={() => setTimelineMode('urgent')}
                   className={`py-2 text-center rounded-md text-[11px] font-sans font-bold transition-all cursor-pointer ${
@@ -274,7 +290,7 @@ export default function QuotePlanner({ onAddInquiry }: QuotePlannerProps) {
                   }`}
                 >
                   Urgent (+25% Rush)
-                </button>
+                </motion.button>
               </div>
             </div>
 
