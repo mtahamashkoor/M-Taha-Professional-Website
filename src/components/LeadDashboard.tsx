@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useMemo } from 'react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { 
   ResponsiveContainer, BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip 
 } from 'recharts';
@@ -28,7 +28,7 @@ const CustomTooltip = ({ active, payload }: any) => {
 };
 import { 
   Users, TrendingUp, Inbox, CheckCircle2, Search, Filter, 
-  MessageSquare, FileText, ChevronRight, Save, Trash2, Globe, Clock, PlusSquare, ArrowUpRight, Lock 
+  MessageSquare, FileText, ChevronRight, Save, Trash2, Globe, Clock, PlusSquare, ArrowUpRight, Lock, Coins 
 } from 'lucide-react';
 
 interface LeadDashboardProps {
@@ -112,6 +112,16 @@ export default function LeadDashboard({
       totalPipelinePKR: totPKR
     };
   }, [inquiries]);
+
+  const avgCostPKR = useMemo(() => {
+    if (inquiries.length === 0) return 0;
+    return Math.round(metrics.totalPipelinePKR / inquiries.length);
+  }, [inquiries, metrics.totalPipelinePKR]);
+
+  const avgCostUSD = useMemo(() => {
+    if (inquiries.length === 0) return 0;
+    return Math.round(metrics.totalPipelineUSD / inquiries.length);
+  }, [inquiries, metrics.totalPipelineUSD]);
 
   // Custom colors for each sales pipeline stage
   const STATUS_COLORS: Record<LeadStatus, string> = {
@@ -329,7 +339,7 @@ export default function LeadDashboard({
       </div>
 
       {/* Metric KPI cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         
         {/* KPI: Total Pipeline PKR */}
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 shadow-xl shadow-black/10 space-y-4">
@@ -338,8 +348,20 @@ export default function LeadDashboard({
             <TrendingUp className="h-4 w-4 text-emerald-400" />
           </div>
           <div>
-            <h4 className="font-mono text-xl font-extrabold text-white">PKR {metrics.totalPipelinePKR.toLocaleString()}</h4>
+            <h4 className="font-mono text-lg font-extrabold text-white">PKR {metrics.totalPipelinePKR.toLocaleString()}</h4>
             <p className="text-[10px] text-zinc-400 font-mono mt-1">/ Approx. ${metrics.totalPipelineUSD.toLocaleString()} USD</p>
+          </div>
+        </div>
+
+        {/* KPI: Average Cost Density */}
+        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 shadow-xl shadow-black/10 space-y-4">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] uppercase font-mono tracking-wider font-bold text-zinc-400">Avg Lead Value</span>
+            <Coins className="h-4 w-4 text-yellow-400 animate-pulse" />
+          </div>
+          <div>
+            <h4 className="font-mono text-lg font-extrabold text-white text-yellow-400">PKR {avgCostPKR.toLocaleString()}</h4>
+            <p className="text-[10px] text-zinc-405 text-zinc-400 font-mono mt-1">/ Approx. ${avgCostUSD.toLocaleString()} USD</p>
           </div>
         </div>
 
@@ -350,7 +372,7 @@ export default function LeadDashboard({
             <Users className="h-4 w-4 text-blue-400" />
           </div>
           <div>
-            <h4 className="font-mono text-2xl font-bold text-white">{metrics.totalLeads} Records</h4>
+            <h4 className="font-mono text-lg font-bold text-white">{metrics.totalLeads} Records</h4>
             <p className="text-[10px] text-zinc-400 mt-1">{metrics.newLeads} pending review</p>
           </div>
         </div>
@@ -362,8 +384,8 @@ export default function LeadDashboard({
             <Inbox className="h-4 w-4 text-purple-400" />
           </div>
           <div>
-            <h4 className="font-mono text-2xl font-bold text-white">{metrics.inDiscussionLeads} Accounts</h4>
-            <p className="text-[10px] text-zinc-400 mt-1 font-sans">Involved with negotiation blueprints</p>
+            <h4 className="font-mono text-lg font-bold text-white">{metrics.inDiscussionLeads} Accounts</h4>
+            <p className="text-[10px] text-zinc-400 mt-1 font-sans">In negotiation blueprints</p>
           </div>
         </div>
 
@@ -374,8 +396,8 @@ export default function LeadDashboard({
             <CheckCircle2 className="h-4 w-4 text-emerald-400" />
           </div>
           <div>
-            <h4 className="font-mono text-2xl font-bold text-white">{metrics.activeProjects} Tiers</h4>
-            <p className="text-[10px] text-zinc-400 mt-1 font-sans">Under strict military deadline models</p>
+            <h4 className="font-mono text-lg font-bold text-white">{metrics.activeProjects} Tiers</h4>
+            <p className="text-[10px] text-zinc-400 mt-1 font-sans">Under deadline models</p>
           </div>
         </div>
 
@@ -425,67 +447,77 @@ export default function LeadDashboard({
           {/* List or Table */}
           {filteredInquiries.length > 0 ? (
             <div className="divide-y divide-zinc-800">
-              {filteredInquiries.map((inq) => {
-                const isSelected = selectedInquiryId === inq.id;
-                return (
-                  <div
-                    key={inq.id}
-                    onClick={() => onSelectInquiry(inq.id)}
-                    className={`p-4 transition cursor-pointer flex items-center justify-between ${
-                      isSelected ? 'bg-zinc-900 border-l-2 border-yellow-400' : 'hover:bg-zinc-900/40'
-                    }`}
-                  >
-                    <div className="space-y-1.5 max-w-[70%]">
-                      <div className="flex flex-wrap items-center gap-1.5">
-                        <h5 className="font-sans text-xs font-bold text-white">{inq.clientName}</h5>
-                        {inq.isPriority && (
-                          <span className="inline-flex items-center rounded-full bg-rose-950/80 border border-rose-900 px-1.5 py-0.5 text-[8.5px] font-bold text-rose-450 uppercase tracking-wider animate-pulse whitespace-nowrap">
-                            Priority
-                          </span>
-                        )}
-                        {inq.clientCompany && (
-                          <span className="text-[10px] text-zinc-400 bg-zinc-950 border border-zinc-800 rounded px-1.5 py-0.5 line-clamp-1">
-                            {inq.clientCompany}
-                          </span>
-                        )}
+              <AnimatePresence initial={false}>
+                {filteredInquiries.map((inq) => {
+                  const isSelected = selectedInquiryId === inq.id;
+                  return (
+                    <motion.div
+                      layout
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{ 
+                        layout: { type: 'spring', stiffness: 350, damping: 30 },
+                        opacity: { duration: 0.15 }
+                      }}
+                      key={inq.id}
+                      onClick={() => onSelectInquiry(inq.id)}
+                      className={`p-4 transition cursor-pointer flex items-center justify-between ${
+                        isSelected ? 'bg-zinc-900 border-l-2 border-yellow-400' : 'hover:bg-zinc-900/40'
+                      }`}
+                    >
+                      <div className="space-y-1.5 max-w-[70%]">
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          <h5 className="font-sans text-xs font-bold text-white">{inq.clientName}</h5>
+                          {inq.isPriority && (
+                            <span className="inline-flex items-center rounded-full bg-rose-950/80 border border-rose-900 px-1.5 py-0.5 text-[8.5px] font-bold text-rose-450 uppercase tracking-wider animate-pulse whitespace-nowrap">
+                              Priority
+                            </span>
+                          )}
+                          {inq.clientCompany && (
+                            <span className="text-[10px] text-zinc-400 bg-zinc-950 border border-zinc-800 rounded px-1.5 py-0.5 line-clamp-1">
+                              {inq.clientCompany}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-[10px] font-mono text-zinc-405 text-zinc-400">{getServiceTitle(inq.serviceType)}</p>
+                        <p className="text-[10px] text-zinc-505 text-zinc-500 line-clamp-1 italic">"{inq.clientMessage}"</p>
                       </div>
-                      <p className="text-[10px] font-mono text-zinc-405 text-zinc-400">{getServiceTitle(inq.serviceType)}</p>
-                      <p className="text-[10px] text-zinc-505 text-zinc-500 line-clamp-1 italic">"{inq.clientMessage}"</p>
-                    </div>
 
-                    <div className="flex flex-col items-end gap-1.5 shrink-0 ml-4">
-                      <span className="font-mono text-xs font-bold text-yellow-400">
-                        PKR {inq.estimatedCostPKR.toLocaleString()}
-                      </span>
-                      <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[9px] font-semibold ${getStatusColorClass(inq.status)}`}>
-                        {inq.status}
-                      </span>
-                      
-                      {/* Timeline progress bar */}
-                      {(() => {
-                        const progressPercent = getTimelineProgress(inq);
-                        return (
-                          <div className="w-24 mt-0.5 space-y-1" title={`Timeline Progress: ${progressPercent}% calculated from ${inq.estimatedTimelineDays} days estimated limit`}>
-                            <div className="h-1 w-full bg-zinc-800 rounded-full overflow-hidden">
-                              <div 
-                                className="h-full rounded-full transition-all duration-500"
-                                style={{ 
-                                  width: `${progressPercent}%`, 
-                                  backgroundColor: progressPercent === 100 ? '#10b981' : progressPercent > 50 ? '#f59e0b' : '#3b82f6' 
-                                }}
-                              />
+                      <div className="flex flex-col items-end gap-1.5 shrink-0 ml-4">
+                        <span className="font-mono text-xs font-bold text-yellow-400">
+                          PKR {inq.estimatedCostPKR.toLocaleString()}
+                        </span>
+                        <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[9px] font-semibold ${getStatusColorClass(inq.status)}`}>
+                          {inq.status}
+                        </span>
+                        
+                        {/* Timeline progress bar */}
+                        {(() => {
+                          const progressPercent = getTimelineProgress(inq);
+                          return (
+                            <div className="w-24 mt-0.5 space-y-1" title={`Timeline Progress: ${progressPercent}% calculated from ${inq.estimatedTimelineDays} days estimated limit`}>
+                              <div className="h-1 w-full bg-zinc-800 rounded-full overflow-hidden">
+                                <div 
+                                  className="h-full rounded-full transition-all duration-500"
+                                  style={{ 
+                                    width: `${progressPercent}%`, 
+                                    backgroundColor: progressPercent === 100 ? '#10b981' : progressPercent > 50 ? '#f59e0b' : '#3b82f6' 
+                                  }}
+                                />
+                              </div>
+                              <div className="flex items-center justify-between text-[8px] font-mono text-zinc-500 leading-none">
+                                <span>Timeline</span>
+                                <span className="font-bold text-zinc-350">{progressPercent}%</span>
+                              </div>
                             </div>
-                            <div className="flex items-center justify-between text-[8px] font-mono text-zinc-500 leading-none">
-                              <span>Timeline</span>
-                              <span className="font-bold text-zinc-350">{progressPercent}%</span>
-                            </div>
-                          </div>
-                        );
-                      })()}
-                    </div>
-                  </div>
-                );
-              })}
+                          );
+                        })()}
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
             </div>
           ) : (
             <div className="p-12 text-center text-zinc-400 text-xs">
