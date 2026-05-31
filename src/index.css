@@ -1,0 +1,91 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+:root {
+  /* Light Theme Values (light backgrounds, dark typography, soft grey accents) */
+  --theme-zinc-950: #fafafa;       /* deep dark canvas -> light background */
+  --theme-zinc-900: #ffffff;       /* sub-containers -> solid white cards */
+  --theme-zinc-850: #f4f4f5;       /* slightly lighter accents -> ultra light gray */
+  --theme-zinc-800: #e4e4e7;       /* border-zinc-800 -> standard card borders */
+  --theme-zinc-700: #d4d4d8;       /* hover boundary card borders */
+  --theme-zinc-600: #71717a;       /* secondary text styles */
+  --theme-zinc-500: #52525b;       /* muted secondary texts */
+  --theme-zinc-400: #3f3f46;       /* highly legible description text */
+  --theme-zinc-350: #27272a;       /* high readability body text */
+  --theme-zinc-300: #18181b;       /* strong list headers/text labels */
+  --theme-zinc-200: #09090b;       /* dark primary indicators */
+  --theme-zinc-100: #09090b;       /* heading headers on white canvas */
+  --theme-white: #000000;          /* headings standard colors */
+  
+  --theme-emerald-400: #059669;    /* emerald brand coloring as deep professional green */
+  --theme-emerald-500: #047857;    /* darker highlight interactions */
+  --theme-emerald-950: #ecfdf5;    /* back-cover badge shading */
+}
+
+.dark {
+  /* Dark Theme Values (restoring native look and feel) */
+  --theme-zinc-950: #09090b;       /* native off-black */
+  --theme-zinc-900: #18181b;       /* native dark charcoal */
+  --theme-zinc-850: #202024;       /* native sub-elements */
+  --theme-zinc-800: #27272a;       /* native dark borders */
+  --theme-zinc-700: #3f3f46;       /* native interactive card borders */
+  --theme-zinc-600: #52525b;       /* secondary muted details */
+  --theme-zinc-500: #71717a;       /* gray elements */
+  --theme-zinc-400: #a1a1aa;       /* standard description font color */
+  --theme-zinc-350: #bcbcbc;       /* bright body texts */
+  --theme-zinc-300: #d4d4d8;       /* high visibility lists */
+  --theme-zinc-200: #e4e4e7;       /* titles contrast */
+  --theme-zinc-100: #f4f4f5;       /* primary texts */
+  --theme-white: #ffffff;          /* solid white highlights */
+  
+  --theme-emerald-400: #34d399;    /* emerald bright tech accents */
+  --theme-emerald-500: #10b981;    /* main success brand themes */
+  --theme-emerald-950: #022c22;    /* deep dark green background badges */
+}
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* Map standard tailwind tokens to CSS custom variables */
+  --color-zinc-950: var(--theme-zinc-950);
+  --color-zinc-900: var(--theme-zinc-900);
+  --color-zinc-850: var(--theme-zinc-850);
+  --color-zinc-800: var(--theme-zinc-800);
+  --color-zinc-700: var(--theme-zinc-700);
+  --color-zinc-600: var(--theme-zinc-600);
+  --color-zinc-500: var(--theme-zinc-500);
+  --color-zinc-400: var(--theme-zinc-400);
+  --color-zinc-350: var(--theme-zinc-350);
+  --color-zinc-300: var(--theme-zinc-300);
+  --color-zinc-200: var(--theme-zinc-200);
+  --color-zinc-100: var(--theme-zinc-100);
+  --color-white: var(--theme-white);
+  --color-emerald-400: var(--theme-emerald-400);
+  --color-emerald-500: var(--theme-emerald-500);
+  --color-emerald-950: var(--theme-emerald-950);
+}
+
+
+/* Custom scrollbar to keep layout highly elegant */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.2);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(156, 163, 175, 0.4);
+}
+
+.glow-indigo {
+  box-shadow: 0 0 40px -10px rgba(99, 102, 241, 0.15);
+}
+.glow-emerald {
+  box-shadow: 0 0 40px -10px rgba(16, 185, 129, 0.15);
+}
